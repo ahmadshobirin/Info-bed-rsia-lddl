@@ -16,13 +16,53 @@
             font-weight: bolder;
             text-align: center
         }
+
+        .merah{
+            background-color: #e74c3c;
+        }
+
+        .hijau{
+            background-color: #2ecc71;
+        }
+
+        h1{
+            color:white;
+        }
+
+        .col-md-4{
+            margin-top:30px;
+        }
     </style>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4"><br>
+            <div class="col-md-6"><br>
                 <div class="card">
                     <div class="card-header">
-                        <center><b>BANGSAL KAMAR INAP</b></center>
+                        <h2 style="color:black"><b>INFORMASI TEMPAT TIDUR RAWAT INAP <br> RSIA Lombok dua dua Lontar</b></h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @foreach ($data as $item)
+                                <div class="col-md-4">
+                                    <div class="card-header">
+                                        <center><h3>{{$item->kelas}}</h3></center>
+                                    </div>
+                                    @php
+                                        $tersedia = (int) $item->kapasitas - (int) $item->terisi
+                                    @endphp
+                                    <div class="card-body {{ ($tersedia >= 0) ? 'hijau' : 'merah'}}  ">
+                                        <center><h1><b>{{$tersedia}}</b></h1></center>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6"><br>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 style="color:black"><b>KAMAR INAP</b></h2>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">
@@ -35,43 +75,32 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="table-primary">
-                                    <td>VIP</td>
-                                    <td>2</td>
-                                    <td>2</td>
-                                    <td>0</td>
-                                </tr>
-                                <tr class="table-success">
-                                    <td>1</td>
-                                    <td>2</td>
-                                    <td>2</td>
-                                    <td>0</td>
-                                </tr>
-                                <tr class="table-warning">
-                                    <td>2</td>
-                                    <td>2</td>
-                                    <td>2</td>
-                                    <td>0</td>
-                                </tr>
-                                <tr class="table-danger">
-                                    <td>3</td>
-                                    <td>2</td>
-                                    <td>2</td>
-                                    <td>0</td>
-                                </tr>
+                                @php
+                                    $totalKapasitas = 0;
+                                    $totalTerisi = 0;
+                                    $totalTersedia = 0;
+                                @endphp
+                                @foreach ($data as $item)
+                                    @php
+                                        $totalKapasitas += $item->kapasitas;
+                                        $totalTerisi += $item->terisi;
+                                        $tersedia = (int) $item->kapasitas - (int) $item->terisi;
+                                        $totalTersedia = $tersedia;
+                                    @endphp
+                                    <tr class="{{$classColorRowTable[$loop->index]}}">
+                                        <td>{{$item->kelas}}</td>
+                                        <td>{{$item->kapasitas}}</td>
+                                        <td>{{$item->terisi}}</td>
+                                        <td>{{ $tersedia }}</td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                             <tfoot>
                                 <tr class="">
-                                    <td>ISOLASI</td>
-                                    <td>2</td>
-                                    <td>2</td>
-                                    <td>2</td>
-                                </tr>
-                                <tr class="">
                                     <td>JUMLAH</td>
-                                    <td>2</td>
-                                    <td>2</td>
-                                    <td>2</td>
+                                    <td>{{ $totalKapasitas }}</td>
+                                    <td>{{ $totalTerisi }}</td>
+                                    <td>{{ $totalTersedia }}</td>
                                 </tr>
                             </tfoot>
                         </table>

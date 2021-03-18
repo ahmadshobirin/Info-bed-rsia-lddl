@@ -13,7 +13,17 @@ class InfoBedController extends Controller
      */
     public function index()
     {
-        $data = DB::table("kamar")->get();
-        return view("index");
+        $classColorRowTable = [ "table-primary", "table-success", "table-danger", "table-warning", "tabel-info"];
+        $data = DB::table("kamar")
+                ->select(
+                    "kelas",
+                    DB::raw(" SUM(jumlah_bed) AS kapasitas"),
+                    DB::raw("(SELECT COUNT(1) FROM kamarpakai WHERE `kamarpakai`.`kelas` = kamar.`kelas` AND kamarpakai.status_kamar = 'MASUK') AS 'terisi'")
+                )
+                ->where("kategori","=", "Neonatus")
+                ->where("kelas", "!=", "NICU")
+                ->groupBy("kelas")
+                ->get();
+        return view("index", compact('data', 'classColorRowTable'));
     }
 }
